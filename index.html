@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>FF PANEL ULTIMATE</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --neon-green: #39FF14;
+            --neon-red: #ff3131;
+            --bg-dark: #0a0a0a;
+            --card-bg: rgba(20, 20, 20, 0.95);
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            margin: 0; padding: 0;
+            background-color: var(--bg-dark);
+            color: white; font-family: 'Segoe UI', sans-serif;
+            display: flex; justify-content: center; align-items: center;
+            height: 100vh; overflow: hidden;
+        }
+
+        #toast {
+            visibility: hidden; min-width: 220px;
+            background: var(--neon-green); color: #000;
+            text-align: center; border-radius: 8px;
+            padding: 10px; position: fixed; top: 20px;
+            z-index: 1000; font-weight: 900;
+            text-transform: uppercase; box-shadow: 0 0 15px var(--neon-green);
+            opacity: 0; transition: 0.3s;
+        }
+        #toast.show { visibility: visible; opacity: 1; top: 40px; }
+        #toast.error { background: var(--neon-red); box-shadow: 0 0 15px var(--neon-red); color: white; }
+
+        .app-container {
+            width: 100%; max-width: 400px; height: 100%;
+            display: flex; flex-direction: column;
+            padding: 20px; position: relative;
+        }
+
+        .hidden { display: none !important; }
+
+        .logo-box { text-align: center; margin: 40px 0; animation: pulse 2s infinite; }
+        @keyframes pulse {
+            0% { transform: scale(1); filter: drop-shadow(0 0 5px var(--neon-green)); }
+            50% { transform: scale(1.05); filter: drop-shadow(0 0 15px var(--neon-green)); }
+            100% { transform: scale(1); filter: drop-shadow(0 0 5px var(--neon-green)); }
+        }
+        .logo-box jpg { width: 90px; }
+
+        .input-group {
+            width: 100%; margin-bottom: 15px; background: #1a1a1a;
+            border-radius: 12px; border: 1px solid #333;
+            display: flex; align-items: center;
+        }
+        .input-group i.prefix { padding: 0 15px; color: var(--neon-green); }
+        .input-group input {
+            flex: 1; height: 50px; background: transparent; border: none;
+            color: white; outline: none; font-size: 14px;
+        }
+        .eye-btn { padding: 0 15px; color: #555; cursor: pointer; }
+
+        .btn-main {
+            width: 100%; height: 50px;
+            background: linear-gradient(45deg, #1e6600, #2b9300);
+            border: none; border-radius: 12px; color: black;
+            font-weight: 900; text-transform: uppercase; cursor: pointer;
+            margin-top: 10px; box-shadow: 0 5px 15px rgba(43, 147, 0, 0.3);
+        }
+
+        .panel-card {
+            width: 100%; background: var(--card-bg); border-radius: 25px;
+            padding: 20px; border: 1px solid #444; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .panel-card h2 {
+            font-size: 14px; color: var(--neon-green); text-align: center;
+            margin-bottom: 25px; border-bottom: 1px solid #333; padding-bottom: 10px;
+            letter-spacing: 2px;
+        }
+        .item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .item span { font-weight: bold; color: #bcbcbc; font-size: 15px; }
+
+        .switch { position: relative; width: 46px; height: 24px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider {
+            position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #333; transition: .4s; border-radius: 34px; border: 1px solid #444;
+        }
+        .slider:before {
+            position: absolute; content: ""; height: 16px; width: 16px;
+            left: 3px; bottom: 3px; background-color: #888; transition: .4s; border-radius: 50%;
+        }
+        input:checked + .slider { background-color: rgba(57, 255, 20, 0.2); border-color: var(--neon-green); }
+        input:checked + .slider:before { transform: translateX(22px); background-color: var(--neon-green); box-shadow: 0 0 8px var(--neon-green); }
+
+        .btn-launch {
+            margin-top: 40px; width: 100%; padding: 14px;
+            background: transparent; border: 2px solid var(--neon-green);
+            color: var(--neon-green); font-weight: 900; border-radius: 10px;
+            cursor: pointer; transition: 0.3s; text-transform: uppercase;
+        }
+
+        .get-key-btn {
+            margin-top: 25px;
+            color: #555;
+            background: none;
+            border: none;
+            font-size: 12px;
+            cursor: pointer;
+            text-decoration: underline;
+            width: 100%;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="toast">SYSTEM READY</div>
+
+    <audio id="clickSfx" src="https://www.soundjay.com/buttons/sounds/button-16.mp3"></audio>
+    <audio id="notifSfx" src="https://www.soundjay.com/buttons/sounds/beep-07.mp3"></audio>
+    <audio id="errorSfx" src="https://www.soundjay.com/buttons/sounds/beep-05.mp3"></audio>
+
+    <div class="app-container">
+        <div id="loginPage" style="width:100%;">
+            <div class="logo-box"><jpg src="logoffryzz.jpg" alt="Logo"></div>
+            <div class="input-group">
+                <i class="fa-solid fa-user prefix"></i>
+                <input type="text" id="user" placeholder="USERNAME" autocomplete="off">
+            </div>
+            <div class="input-group">
+                <i class="fa-solid fa-lock prefix"></i>
+                <input type="password" id="pass" placeholder="PASSWORD">
+                <i class="fa-solid fa-eye eye-btn" id="togglePass"></i>
+            </div>
+            <button class="btn-main" onclick="doLogin()">LOGIN PANEL</button>
+            <button class="get-key-btn" onclick="goToWA()">GET ACCESS KEY</button>
+        </div>
+
+        <div id="settingsPage" class="hidden" style="width:100%;">
+            <div class="panel-card">
+                <h2>MENU AIMBOT</h2>
+                <div class="item">
+                    <span>LOCK HEAD</span>
+                    <label class="switch">
+                        <input type="checkbox" onchange="handleFeature(this, 'Lock Head')">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="item">
+                    <span>LOCK BODY</span>
+                    <label class="switch">
+                        <input type="checkbox" onchange="handleFeature(this, 'Lock Body')">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+            <button class="btn-launch" onclick="launchFF()">LAUNCH FREE FIRE</button>
+        </div>
+    </div>
+
+<script>
+    // Cek status login saat aplikasi dibuka
+    window.onload = () => {
+        if(localStorage.getItem("ff_auth") === "true") {
+            showSettings();
+        }
+    };
+
+    function goToWA() {
+        playClick();
+        window.location.href = "https://wa.me/6285608906983";
+    }
+
+    // Toggle Sembunyikan/Lihat Password
+    const pInput = document.getElementById('pass');
+    document.getElementById('togglePass').onclick = function() {
+        const isPass = pInput.type === 'password';
+        pInput.type = isPass ? 'text' : 'password';
+        this.classList.toggle('fa-eye');
+        this.classList.toggle('fa-eye-slash');
+        playClick();
+    };
+
+    // FUNGSI LOGIN DENGAN VALIDASI DATA KHUSUS
+    function doLogin() {
+        playClick();
+        const inputUser = document.getElementById('user').value;
+        const inputPass = document.getElementById('pass').value;
+
+        // Validasi sesuai permintaan: user 11 & pass 33
+        if(inputUser === "user 11" && inputPass === "pass 33") {
+            localStorage.setItem("ff_auth", "true");
+            showSettings();
+            showToast("ACCESS GRANTED", false);
+        } else {
+            document.getElementById('errorSfx').play();
+            showToast("AKSES DITOLAK!", true);
+        }
+    }
+
+    function showSettings() {
+        document.getElementById('loginPage').classList.add('hidden');
+        document.getElementById('settingsPage').classList.remove('hidden');
+    }
+
+    function handleFeature(el, name) {
+        playClick();
+        if(el.checked) {
+            document.getElementById('notifSfx').play();
+            showToast(name + " ACTIVE", false);
+        }
+    }
+
+    function showToast(msg, isError) {
+        const t = document.getElementById("toast");
+        t.innerText = msg;
+        
+        if(isError) {
+            t.classList.add("error");
+        } else {
+            t.classList.remove("error");
+        }
+        
+        t.classList.add("show");
+        setTimeout(() => t.classList.remove("show"), 2000);
+    }
+
+    function playClick() {
+        const s = document.getElementById('clickSfx');
+        s.currentTime = 0; s.play();
+    }
+
+    function launchFF() {
+        playClick();
+        window.location.href = "intent://#Intent;package=com.dts.freefireth;end";
+    }
+</script>
+
+</body>
+</html>
